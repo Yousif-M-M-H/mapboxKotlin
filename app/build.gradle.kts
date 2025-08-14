@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation("com.mapbox.maps:android:11.13.5")
     implementation("com.mapbox.extension:maps-compose:11.13.5")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
