@@ -1,5 +1,6 @@
 package com.example.mapboxkotlin.data.model
 
+import android.util.Log
 import com.google.gson.annotations.SerializedName
 import com.mapbox.geojson.Point
 
@@ -9,7 +10,13 @@ data class Location(
 ) {
     // Convert to Mapbox Point (longitude, latitude order)
     fun toMapboxPoint(): Point {
-        // Input is [latitude, longitude], Mapbox needs [longitude, latitude]
-        return Point.fromLngLat(coordinates[1], coordinates[0])
+        // API sends [latitude, longitude], Mapbox needs [longitude, latitude]
+        val lat = coordinates[0]
+        val lng = coordinates[1]
+
+        Log.d("Location", "Converting coordinates: API=[lat=$lat, lng=$lng] -> Mapbox=[lng=$lng, lat=$lat]")
+
+        // Create Mapbox Point with longitude first, latitude second
+        return Point.fromLngLat(lng, lat)
     }
 }

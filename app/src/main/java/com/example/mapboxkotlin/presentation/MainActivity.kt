@@ -3,7 +3,9 @@ package com.example.mapboxkotlin.presentation
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.mapbox.maps.MapView
 import com.example.mapboxkotlin.R
 import com.example.mapboxkotlin.presentation.map.MapManager
@@ -22,19 +24,26 @@ class MainActivity : AppCompatActivity() {
         mapManager = MapManager(mapView, this)
 
         mapManager.initialize {
-            // Start fetching SDSM updates
-            viewModel.startUpdates()
+            observeUpdates()
+        }
+    }
 
-            // Observe and update map
-            lifecycleScope.launch {
+    private fun observeUpdates() {
+        lifecycleScope.launch {
+            // Only collect updates when the activity is at least STARTED
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Start fetching updates when visible
+                viewModel.startUpdates()
+
+                // Observe and update map with changes only
                 viewModel.sdsmObjects.collect { objects ->
                     mapManager.updateObjects(objects)
                 }
             }
+            // Updates automatically stop when lifecycle goes below STARTED
         }
     }
 
-    // Add lifecycle methods for MapView
     override fun onStart() {
         super.onStart()
         mapView.onStart()
